@@ -24,13 +24,16 @@ export default function AddRecipe() {
         // Get form data
         const formData = new FormData(event.target);
         // Post form data to the backend
-        const response = await fetch('http://localhost:4000/recipes', {
+        const response = await fetch(`${process.env.REACT_APP_RECIPE_API}/recipes`, {
             method: 'POST',
             body: formData
         });
-        console.log(response);
         // Update message based on response status
+        if (response.status !== 201) {
+            setMessage('Failed to add recipe');
+        }
         // Open collapsible Alert
+        setOpen(true);
         // Set loading to false
         setLoading(false);
     }

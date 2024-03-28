@@ -26,8 +26,8 @@ export default function Recipe() {
             {isLoading ? <img src={spinner} alt="spinner" /> : (
                 <Container sx={{ my: '2rem' }}>
                     <h1>{recipe.title}</h1>
-                    <div dangerouslySetInnerHTML={{ __html: recipe.summary }} />
-                    <img src={recipe.image} alt={recipe.title} />
+                    <div>{recipe.description}</div>
+                    <img width="100%" src={`https://savefiles.org/${recipe.image}?shareable_link=146`} alt={recipe.title} />
                 </Container>
             )}
         </>
