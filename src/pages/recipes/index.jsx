@@ -1,25 +1,30 @@
 import { Container, Grid, TextField } from "@mui/material";
 import { useState } from "react";
 import useSWR from "swr";
+import { useSessionStorage } from "usehooks-ts";
 import Navbar from "../../components/navbar";
 import RecipeItem from "../../components/recipe-item";
 import noRecipes from "../../assets/images/undraw_no_data_re_kwbl.svg";
 import spinner from "../../assets/images/infinite-spinner.svg";
+import { USER_INFO } from "../../guards/constants";
 
-const searchRecipes = ([endpoint, query]) => {
+const searchRecipes = async ([endpoint, userId, query]) => {
     // prepare URL
     // const url = new URL(`${process.env.REACT_APP_SPOONACULAR_API}${endpoint}`);
     const url = new URL(`${process.env.REACT_APP_RECIPE_API}${endpoint}`);
-    url.searchParams.append('apiKey', process.env.REACT_APP_SPOONACULAR_API_KEY);
-    url.searchParams.append('query', query);
+    // url.searchParams.append('apiKey', process.env.REACT_APP_SPOONACULAR_API_KEY);
+    // url.searchParams.append('query', query);
+    url.searchParams.append('userId', userId);
     // fetch recipes from API and return
-    return fetch(url).then(response => response.json());
+    const response = await fetch(url, { credentials: 'include' });
+    return await response.json();
 }
 
 export default function Recipes() {
+    const [userInfo] = useSessionStorage(USER_INFO, null);
     const [query, setQuery] = useState("");
     // const { data, isLoading } = useSWR(['/recipes/complexSearch', query], searchRecipes);
-    const { data, isLoading } = useSWR(['/recipes', query], searchRecipes);
+    const { data, isLoading } = useSWR(['/recipes', userInfo?._id, query], searchRecipes);
 
     return (
         <>

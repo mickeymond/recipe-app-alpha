@@ -1,6 +1,6 @@
-import { Alert, Box, Collapse, Container, IconButton, MenuItem, TextField } from "@mui/material";
-import { Close } from "@mui/icons-material";
+import { Box, Container, MenuItem, TextField } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Navbar from "../../components/navbar";
 
@@ -12,9 +12,8 @@ export const countries = [
 ];
 
 export default function AddRecipe() {
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
-    const [open, setOpen] = useState(false);
-    const [message, setMessage] = useState('New Recipe Added Successfully!');
 
     const addRecipe = async (event) => {
         // Set loading to true
@@ -25,17 +24,17 @@ export default function AddRecipe() {
         const formData = new FormData(event.target);
         // Post form data to the backend
         const response = await fetch(`${process.env.REACT_APP_RECIPE_API}/recipes`, {
+            credentials: 'include',
             method: 'POST',
             body: formData
         });
-        // Update message based on response status
-        if (response.status !== 201) {
-            setMessage('Failed to add recipe');
+        // Navigate to /recipes if add recipe was successful
+        if (response.status === 201) {
+            navigate('/recipes');
+        } else {
+            // Set loading to false
+            setLoading(false);
         }
-        // Open collapsible Alert
-        setOpen(true);
-        // Set loading to false
-        setLoading(false);
     }
 
     return (
@@ -80,24 +79,6 @@ export default function AddRecipe() {
                         ))}
                     </TextField>
                     <Box textAlign="center">
-                        <Collapse in={open}>
-                            <Alert
-                                action={
-                                    <IconButton
-                                        aria-label="close"
-                                        color="inherit"
-                                        size="small"
-                                        onClick={() => {
-                                            setOpen(false);
-                                        }}
-                                    >
-                                        <Close fontSize="inherit" />
-                                    </IconButton>
-                                }
-                                sx={{ mb: 2 }}
-                            >{message}</Alert>
-                        </Collapse>
-
                         <LoadingButton
                             sx={{ width: '50%' }}
                             loading={loading}
